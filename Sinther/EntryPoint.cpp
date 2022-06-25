@@ -78,7 +78,7 @@ void LoadMusic(std::string filename)
 				if (auto hr = source->SubmitSourceBuffer(&audio_buffer); FAILED(hr))
 				{
 					_com_error error(hr);
-					std::wcout << error.ErrorMessage();
+					std::cout << error.ErrorMessage();
 				}
 				(source->Start());
 				std::this_thread::sleep_for(std::chrono::milliseconds(2000));
