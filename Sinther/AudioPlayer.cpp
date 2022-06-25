@@ -74,7 +74,33 @@ void AudioPlayer::Audio::Load(const std::string& file)
 	}
 }
 
+WAVEFORMATEX AudioPlayer::Audio::GetFormat() const
+{
+	return format;
+}
+
+XAUDIO2_BUFFER AudioPlayer::Audio::GetAudioBuffer() const
+{
+	return audio_buffer;
+}
+
 AudioPlayer::Audio::AudioException::AudioException(const std::string& cause) : Exception(cause)
 {
 
+}
+
+AudioPlayer::AudioPlayer()
+{
+	THROW_IF_FAILED(XAudio2Create(&audio_engine));
+	THROW_IF_FAILED(audio_engine->CreateMasteringVoice(&mastering_voice));
+}
+
+void AudioPlayer::Play(const Audio& sound)
+{
+	IXAudio2SourceVoice* source_voice = nullptr;
+	auto format = sound.GetFormat();
+	auto audio_buffer = sound.GetAudioBuffer();
+	THROW_IF_FAILED(audio_engine->CreateSourceVoice(&source_voice, &format));
+	THROW_IF_FAILED(source_voice->SubmitSourceBuffer(&audio_buffer));
+	THROW_IF_FAILED(source_voice->Start());
 }
